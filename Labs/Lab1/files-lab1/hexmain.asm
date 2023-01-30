@@ -20,7 +20,10 @@ stop:	j	stop		# stop after one run
 
   # You can write your own code for hexasc here
   #
-  hexasc:
+hexasc:
+  	
 	addi $v0,$a0,0x30
 	jr $ra
+
+
 
