@@ -21,7 +21,7 @@ stop:	j	stop		# stop after one run
   # You can write your own code for hexasc here
   #
 hexasc:
-	andi $a0,$a0,0xF	# bitmask. bitwise AND so that only the 4 msb are left
+	andi $a0,$a0,0xF	# bitmask. bitwise AND so that only the 4 lsb are left
 	bgt $a0,9,atof		# if the input is larger than 9, call atof subroutine
 	addi $v0,$a0,0x30	# add 0x30 so that they line up with the ASCII codes for 0 to 9
 	jr $ra			# jump back to stored address in main

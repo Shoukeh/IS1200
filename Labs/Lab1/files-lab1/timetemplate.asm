@@ -73,4 +73,86 @@ tiend:	sw	$t0,0($a0)	# save updated result
 	nop
 
   # you can write your code for subroutine "hexasc" below this line
-  #
+  # hexasc: input: $a0, output: $v0
+hexasc:
+	andi $a0,$a0,0xF	# bitmask. bitwise AND so that only the 4 msb are left
+	addi $v0,$a0,0x30	# add 0x30 so that they line up with the ASCII codes for 0 to 9
+	jr $ra			# jump back to stored address in main
+	
+  # temp delay
+delay:
+	jr $ra
+	nop
+
+  # converts the time from binary/hex to a ASCII string
+time2string:
+	move $t7,$ra		# store the return address to return to the "main loop" later on
+	move $t6,$a0		# temporarily store the adress in a0 to s0 as a0 is used as the input for hexasc
+
+	andi $a1,0xFFFF		# sanitize register a1 so that only the 4 LSB are present
+	
+	# convert to ASCII and load into the stack
+	
+	# Xx:xx
+	srl $a0,$a1,12
+	jal hexasc
+	PUSH($v0)
+	
+	# xX:xx
+	srl $a0,$a1,8
+	jal hexasc
+	PUSH($v0)
+	
+	# xx::xx
+	li $v0,0x3A
+	PUSH($v0)
+	
+	# xx:Xx
+	srl $a0,$a1,4
+	jal hexasc
+	PUSH($v0)
+	
+	# xx:xX
+	move $a0,$a1
+	jal hexasc
+	PUSH($v0)
+	
+	# NULL
+	li $v0,0x00
+	PUSH($v0)
+	
+	# unload the stack into memory
+	
+	move $a0,$t6		# restore address from temporary register
+	
+	# NULL
+	POP($t0)
+	sb $t0,5($a0)
+	
+	# xx:xX
+	POP($t0)
+	sb $t0,4($a0)
+	
+	# xx:Xx
+	POP($t0)
+	sb $t0,3($a0)
+	
+	# xx::xx
+	POP($t0)
+	sb $t0,2($a0)
+	
+	# xX:xx
+	POP($t0)
+	sb $t0,1($a0)
+	
+	# Xx:xx
+	POP($t0)
+	sb $t0,0($a0)
+	
+	move $ra,$t7
+	jr $ra
+	
+	
+	
+	
+	
