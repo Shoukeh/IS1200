@@ -4,7 +4,7 @@
 
 	.text
 main:
-	li	$a0,10		# change this to test different values
+	li	$a0,2		# change this to test different values
 
 	jal	hexasc		# call hexasc
 	nop			# delay slot filler (just in case)	
@@ -21,9 +21,15 @@ stop:	j	stop		# stop after one run
   # You can write your own code for hexasc here
   #
 hexasc:
-  	
-	addi $v0,$a0,0x30
-	jr $ra
+	andi $a0,$a0,0xF	# bitmask. bitwise AND so that only the 4 msb are left
+	bgt $a0,9,atof		# if the input is larger than 9, call atof subroutine
+	addi $v0,$a0,0x30	# add 0x30 so that they line up with the ASCII codes for 0 to 9
+	jr $ra			# jump back to stored address in main
 
+  # atof handles inputs that are A to F in hex
+atof:
+	addi $v0,$a0,0x37	# add 0x37 to line 10-15 up with ASCII codes for A to F
+	jr $ra			# jump back to stored address in main
+	
 
 
