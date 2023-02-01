@@ -78,6 +78,7 @@ hexasc:
 	andi $a0,$a0,0xF	# bitmask. bitwise AND so that only the 4 msb are left
 	addi $v0,$a0,0x30	# add 0x30 so that they line up with the ASCII codes for 0 to 9
 	jr $ra			# jump back to stored address in main
+	nop
 	
   # supposedly one loop should take one ms
 onems:
@@ -95,6 +96,7 @@ delay:
 	nop
 	
 	jr $ra			# return back to caller
+	nop
 
   # converts the time from binary/hex to a ASCII string
 time2string:
@@ -108,11 +110,13 @@ time2string:
 	# Xx:xx
 	srl $a0,$a1,12
 	jal hexasc
+	nop
 	PUSH($v0)
 	
 	# xX:xx
 	srl $a0,$a1,8
 	jal hexasc
+	nop
 	PUSH($v0)
 	
 	# xx::xx
@@ -127,6 +131,7 @@ time2string:
 	# xx:xX
 	move $a0,$a1
 	jal hexasc
+	nop
 	PUSH($v0)
 	
 	# NULL
@@ -163,6 +168,7 @@ time2string:
 	
 	move $ra,$t7		# restore return address from temporary register
 	jr $ra			# jump back to caller
+	nop
 	
 	
 	
