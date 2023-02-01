@@ -1,5 +1,6 @@
   # timetemplate.asm
   # Written 2015 by F Lundevall
+  # Edited 2023 by Juris Homickis for the IS1200 course
   # Copyright abandonded - this file is in the public domain.
 
 .macro	PUSH (%reg)
