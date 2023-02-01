@@ -91,7 +91,7 @@ onems:
 delay:
 	subi $a0,$a0,1		# ms = ms - 1
 	li $t0, 0		# i = 0
-	li $a2, 350		# set the for loop constant. 4 works on my 5800X, while 350 is needed on the M1 Max
+	li $a2, 600		# set the for loop constant. 4 works on my 5800X, while 350 is needed on the M1 Max
 				# I assume this is the constant that needed to be adjusted to get this to equal 1000ms if a0 = 1000
 	bgtz $a0, onems		# the actual "while". It will jump to onems if ms/a0 is larger than 0
 	nop
@@ -120,10 +120,6 @@ time2string:
 	nop
 	PUSH($v0)
 	
-	# xx::xx
-	li $v0,0x3A
-	PUSH($v0)
-	
 	# xx:Xx
 	srl $a0,$a1,4
 	jal hexasc
@@ -135,16 +131,12 @@ time2string:
 	nop
 	PUSH($v0)
 	
-	# NULL
-	li $v0,0x00
-	PUSH($v0)
-	
 	# unload the stack into memory
 	
 	move $a0,$t6		# restore address from temporary register
 	
 	# NULL
-	POP($t0)
+	li $v0,0x00
 	sb $t0,5($a0)
 	
 	# xx:xX
@@ -156,7 +148,7 @@ time2string:
 	sb $t0,3($a0)
 	
 	# xx::xx
-	POP($t0)
+	li $t0,0x3A
 	sb $t0,2($a0)
 	
 	# xX:xx
