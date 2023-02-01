@@ -24,7 +24,7 @@ main:
 	syscall
 	nop
 	# wait a little
-	li	$a0,2
+	li	$a0,1000	# assuming this can be changed, makes no sense otherwise
 	jal	delay
 	nop
 	# call tick
@@ -79,10 +79,22 @@ hexasc:
 	addi $v0,$a0,0x30	# add 0x30 so that they line up with the ASCII codes for 0 to 9
 	jr $ra			# jump back to stored address in main
 	
-  # temp delay
+  # supposedly one loop should take one ms
+onems:
+	addi $t0,$t0,1		# i++
+	blt $t0,$t1,onems	# checks i<t1, which in this case is 4
+	nop			# once i = t1, we "fall thru" to the delay subroutine
+	
+  # delay subroutine, loops as many times as a0 tells it. No outputs.
 delay:
-	jr $ra
+	subi $a0,$a0,1		# ms = ms - 1
+	li $t0, 0		# i = 0
+	li $t1, 4		# set the for loop constant
+				# I assume this is the constant that needed to be adjusted to get this to equal 1000ms if a0 = 1000
+	bgtz $a0, onems		# the actual "while". It will jump to onems if ms/a0 is larger than 0
 	nop
+	
+	jr $ra			# return back to caller
 
   # converts the time from binary/hex to a ASCII string
 time2string:
@@ -149,8 +161,8 @@ time2string:
 	POP($t0)
 	sb $t0,0($a0)
 	
-	move $ra,$t7
-	jr $ra
+	move $ra,$t7		# restore return address from temporary register
+	jr $ra			# jump back to caller
 	
 	
 	
