@@ -57,8 +57,10 @@ delay:
 
   # converts the time from binary/hex to a ASCII string
 time2string:
-	move $t7,$ra		# store the return address to return to the "main loop" later on
-	move $t6,$a0		# temporarily store the adress in a0 to s0 as a0 is used as the input for hexasc
+	PUSH $s0		# store s registers in case they were used by caller
+	PUSH $s1
+	move $s0,$ra		# store the return address to return to the "main loop" later on
+	move $s1,$a0		# temporarily store the adress in a0 to s0 as a0 is used as the input for hexasc
 
 	andi $a1,0xFFFF		# sanitize register a1 so that only the 4 LSB are present
 
@@ -89,7 +91,7 @@ time2string:
 
 	# unload the stack into memory
 
-	move $a0,$t6		# restore address from temporary register
+	move $a0,$s1		# restore address from temporary register
 
 	# NULL
 	li $v0,0x00
@@ -115,6 +117,8 @@ time2string:
 	POP $t0
 	sb $t0,0($a0)
 
-	move $ra,$t7		# restore return address from temporary register
+	move $ra,$s0		# restore return address from temporary register
+	POP $s1			# restore s registers
+	POP $s0
 	jr $ra			# jump back to caller
 	nop
