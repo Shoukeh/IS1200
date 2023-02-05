@@ -101,45 +101,42 @@ delay:
 
   # converts the time from binary/hex to a ASCII string
 time2string:
-	PUSH($s0)		# store s registers in case they were used by caller
+	PUSH($ra)		# store s registers in case they were used by caller
+	PUSH($s0)
 	PUSH($s1)
-	move $s0,$ra		# store the return address to return to the "main loop" later on
-	move $s1,$a0		# temporarily store the adress in a0 to s0 as a0 is used as the input for hexasc
+	move $s0,$a0		# store the return address to return to the "main loop" later on
+	move $s1,$a1		# temporarily store the adress in a0 to s0 as a0 is used as the input for hexasc
 
-	andi $a1,0xFFFF		# sanitize register a1 so that only the 4 LSB are present
+	andi $s1,0xFFFF		# sanitize register a1 so that only the 4 LSB are present
 	
 	# convert to ASCII and load into the stack
 	
 	# Xx:xx
-	srl $a0,$a1,12
+	srl $a0,$s1,12
 	jal hexasc
 	nop
 	PUSH($v0)
 	
 	# xX:xx
-	srl $a0,$a1,8
+	srl $a0,$s1,8
 	jal hexasc
 	nop
 	PUSH($v0)
 	
 	# xx:Xx
-	srl $a0,$a1,4
+	srl $a0,$s1,4
 	jal hexasc
 	PUSH($v0)
 	
 	# xx:xX
-	move $a0,$a1
+	move $a0,$s1
 	jal hexasc
 	nop
 	PUSH($v0)
 	
 	# unload the stack into memory
 	
-	move $a0,$s1		# restore address from temporary register
-	
-	# NULL
-	li $v0,0x00
-	sb $t0,5($a0)
+	move $a0,$s0		# restore address from temporary register
 	
 	# xx:xX
 	POP($t0)
@@ -161,11 +158,40 @@ time2string:
 	POP($t0)
 	sb $t0,0($a0)
 	
-	move $ra,$s0		# restore return address from temporary register
-	POP $s1			# restore s registers
-	POP $s0
+	move $a1, $s1			# restore clock to a1
+	
+	POP($s1)			# restore s registers
+	POP($s0)
+	POP($ra)			# restore return address
+	
+	beq $a1, $0, addx		# if the clock is 0000, branch to addx
+	nop
+	
+	j nox				# if the clock is anything else, branch to nox
+	nop
+	
+# adds X and NULL to the memory
+addx:
+	# NULL
+	li $t0,0x00
+	sb $t0,6($a0)
+	
+	# X
+	li $t0,0x58
+	sb $t0,5($a0)
+	
+	jr $ra
+	nop
+
+# adds NULL to the memory
+nox:
+	# NULL
+	li $t0,0x00
+	sb $t0,5($a0)
+	
 	jr $ra			# jump back to caller
 	nop
+	
 	
 	
 	

@@ -47,7 +47,7 @@ delay:
 	addi $t2,$0,1		  # ms = ms - 1
  	sub $a0,$a0,$t2
 	li $t0, 0		# i = 0
-	li $a2, 6000		# set the for loop constant. 4 works on my 5800X, while 350 is needed on the M1 Max
+	li $a2, 6700		# set the for loop constant. 4 works on my 5800X, while 350 is needed on the M1 Max
 				# I assume this is the constant that needed to be adjusted to get this to equal 1000ms if a0 = 1000
 	bgtz $a0, onems		# the actual "while". It will jump to onems if ms/a0 is larger than 0
 	nop
@@ -57,45 +57,42 @@ delay:
 
   # converts the time from binary/hex to a ASCII string
 time2string:
+	PUSH $ra
 	PUSH $s0		# store s registers in case they were used by caller
 	PUSH $s1
-	move $s0,$ra		# store the return address to return to the "main loop" later on
-	move $s1,$a0		# temporarily store the adress in a0 to s0 as a0 is used as the input for hexasc
+	move $s0,$a0
+	move $s1,$a1		
 
-	andi $a1,0xFFFF		# sanitize register a1 so that only the 4 LSB are present
+	andi $s1,0xFFFF		# sanitize register a1 so that only the 4 LSB are present
 
 	# convert to ASCII and load into the stack
 
 	# Xx:xx
-	srl $a0,$a1,12
+	srl $a0,$s1,12
 	jal hexasc
 	nop
 	PUSH $v0 
 
 	# xX:xx
-	srl $a0,$a1,8
+	srl $a0,$s1,8
 	jal hexasc
 	nop
 	PUSH $v0 
 
 	# xx:Xx
-	srl $a0,$a1,4
+	srl $a0,$s1,4
 	jal hexasc
 	PUSH $v0
 
 	# xx:xX
-	move $a0,$a1
+	move $a0,$s1
 	jal hexasc
 	nop
 	PUSH $v0
 
 	# unload the stack into memory
 
-	move $a0,$s1		# restore address from temporary register
-
-	# NULL
-	li $v0,0x00
-	sb $t0,5($a0)
+	move $a0,$s0		# restore address from temporary register
 
 	# xx:xX
 	POP $t0 
@@ -117,8 +114,35 @@ time2string:
 	POP $t0
 	sb $t0,0($a0)
 
-	move $ra,$s0		# restore return address from temporary register
+	move $a1, $s1			# store clock into a temp register that doesnt need to be saved
+	
 	POP $s1			# restore s registers
 	POP $s0
-	jr $ra			# jump back to caller
+	POP $ra			# restore return address
+	beq $a1,$0,addx
 	nop
+	
+	j nox
+	nop
+	
+addx:
+	# NULL
+	li $t0,0x00
+	sb $t0,6($a0)
+	
+	# X
+	li $t0,0x58
+	sb $t0,5($a0)
+	
+	jr $ra
+	nop
+
+nox:
+	# NULL
+	li $t0,0x00
+	sb $t0,5($a0)
+	
+	jr $ra
+	nop
+	
+
