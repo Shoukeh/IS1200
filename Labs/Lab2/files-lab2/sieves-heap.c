@@ -26,6 +26,7 @@ void print_number(int n){
 
 
 void print_sieves(int n) {
+    // create the heap, allocate n bytes to it
     unsigned char *numbers;
     numbers = malloc(n*sizeof(unsigned char));
     // Populate the array
@@ -66,6 +67,7 @@ void print_sieves(int n) {
         }
     }
 
+    // free heap
     free(numbers);
 }
 
