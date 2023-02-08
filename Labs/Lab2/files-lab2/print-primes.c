@@ -28,7 +28,7 @@ int is_prime(int n){
 // Prints a number and uses a global variable to keep track of which column it is on right now. If it is on col 6,
 // print the last number, print new line, reset global column flag.
 void print_number(int n){
-    if(col_flag != 6) {
+    if(col_flag != COLUMNS) {
         printf("%10d ", n);
         col_flag += 1;
     } else {
