@@ -1,7 +1,7 @@
 /*
- sieves.c
+ sieves-surprise.c
  By Juris Homickis
- Last modified: 2023-02-08
+ Last modified: 2023-02-09
 */
 
 #include <stdio.h>
@@ -26,14 +26,16 @@ void print_number(int n){
 
 
 void print_sieves(int n) {
-    unsigned char numbers[n];
+    int arraySize = n * 20;
+    //printf("%d\n", arraySize);
+    unsigned char numbers[arraySize];
     // Populate the array
-    for (int i = 0; i <= n; i++) {
+    for (int i = 0; i <= arraySize; i++) {
         numbers[i] = (char) (i+1);
     }
 
     // set the trues and falses as per wikipedia psuedocode alg
-    for (int i = 0; i < sqrt(n); i++) {
+    for (int i = 0; i < sqrt(arraySize); i++) {
         if (i==0) {
             numbers[i] = (char) 0;
             continue;
@@ -42,7 +44,7 @@ void print_sieves(int n) {
         int temp = (int) numbers[i];
         temp += 256*(floor((i+1)/256));
         if (temp > 0){
-            for (int j = (i+1)*(i+1); j <= n; j+=(i+1)) {
+            for (int j = (i+1)*(i+1); j <= arraySize; j+=(i+1)) {
                 // here, False is implemented by setting the number at id j-2 to 0. True would mean having anything that is > 0
                 numbers[j-1] = (char) 0;
             }
@@ -50,11 +52,16 @@ void print_sieves(int n) {
     }
 
     // print any number that is not "false"
-    for (int i = 0; i < (n-1); i++){
+    int primeCounter = 0;
+    for (int i = 0; i < (arraySize-1); i++){
         if (numbers[i] > 0) {
+            primeCounter += 1;
             int temp = (int) numbers[i];
             temp += 256*(floor((i+1)/256));
-            print_number(temp);
+            if (primeCounter == n) {
+                print_number(temp);
+                break;
+            }
         }
     }
 }
