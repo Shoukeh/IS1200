@@ -6,7 +6,7 @@ int main(int argc, char *argv[]){
     printf("H: %d, W: %d", atoi(argv[1]), atoi(argv[2]));
 
     char matrix[atoi(argv[1])][atoi(argv[2])];
-    char (*pMatrix)[atoi(argv[1])][atoi(argv[2])];;
+    char (*pMatrix)[atoi(argv[1])][atoi(argv[2])];
     pMatrix = &matrix;
 
     (*pMatrix)[1][2] =  "c";
