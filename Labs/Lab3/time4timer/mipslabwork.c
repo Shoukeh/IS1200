@@ -17,18 +17,29 @@ For copyright and licensing, see file COPYING */
 #include "mipslab.h"  /* Declatations for these labs */
 
 int mytime = 0x5957;
+int timeoutcount = 0;
 
 char textstring[] = "text, more text, and even more text!";
 
 /* Interrupt Service Routine */
 void user_isr( void )
 {
+    display_string( 3, "interrupt" );
+    display_update();
     return;
 }
 
 /* Lab-specific initialization goes here */
 void labinit( void )
 {
+    // Init timer
+    T2CON = 0x0070;
+    PR2 = 31250;
+    IEC(0) = 0x100; // enable interrupts T2
+    IFS(0) = 0x000;
+    IPC(2) = 0x1F; // set highest priority
+    T2CON += 0x8000;
+
     // Init LEDs
     volatile int* initLedE = (volatile int*) 0xbf886100;
     *initLedE = 0x00;
@@ -41,11 +52,19 @@ void labinit( void )
 /* This function is called repetitively from the main program */
 void labwork( void )
 {
-    delay( 1000 );
+    //delay( 1000 );
+    while (timeoutcount < 10) {
+        if (IFS(0) & 0x100) {
+            IFSCLR(0) = 256;
+            timeoutcount++;
+        }
+    } timeoutcount = 0;
+
     time2string( textstring, mytime );
     display_string( 3, textstring );
     display_update();
     tick( &mytime );
+
     volatile int* writeLedE = (volatile int*) 0xbf886110;
     *writeLedE += 0x1;
     display_image(96, icon);
@@ -71,6 +90,9 @@ void labwork( void )
             newtime = newtime<<12;
             mytime = mytime & 0x0FFF;
             mytime += newtime;
+            break;
+        
+        default:
             break;
 
     }

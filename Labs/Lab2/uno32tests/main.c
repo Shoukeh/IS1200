@@ -30,7 +30,7 @@ int main()
   /* Local variables. */
   int m;
   int * p; /* Declare p as pointer, so that p can hold an address. */
-  char cs[ 9 ] = "Bonjour!";
+  char cs[9] = "Bonjour!";
   char * cp = cs; /* Declare cp as pointer, initialise cp to point to cs */
 
   /* Do some calculation. */
@@ -81,3 +81,8 @@ int main()
 
   showinfo();
 }
+
+// when fun is called param, which is m, is increades and written to gv
+// 8 bytes
+// an array of chars, and we init cs to be 9 chars
+// see screen, program flash, virtual memory, function instructions 
