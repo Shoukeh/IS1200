@@ -1,0 +1,17 @@
+1. Equipment
+	* "see manuals on the Literature and Resources page" = points 2-4 de https://canvas.kth.se/courses/37651/pages/literature-and-resources
+	* "This development environment will be handed out to each student group (group of two students) at LAB 1"
+2. Prestudy Phase
+3. What kind of project can we make?
+4. Requirements of the project
+	* "it is OK to use these components directly with the Uno32 board and remove the Basic I/O shield"
+	* Games qualify because they use the display on the I/O board
+5. Extended Abstract
+6. Examination and Feedback on the Abstract
+
+------ 7. Development Environments
+
+------- 8. Resources and Advice
+	* We encourage you to use LAB 3 as a starting point of your project. That is, it is allowed to use the lab code, as long as you clearly declare in the code the parts that you have developed.
+
+9. Project EXPO

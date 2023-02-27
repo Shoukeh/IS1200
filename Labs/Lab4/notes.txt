@@ -1,0 +1,5 @@
+3. 
+3.2: ALUSrc: Indicate that we are using imm value by choosing to use the imm field and sign extending it.
+RegDst: Indicate that we are performing a r-type instruction and will be writing to rd which is on bits 15:11 as opposed to
+rt on 20:16 for a i-type instruction. 
+
