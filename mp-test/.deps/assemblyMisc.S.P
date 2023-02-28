@@ -1,2 +1,0 @@
-assemblyMisc.S.o: assemblyMisc.S
-assemblyMisc.S :
