@@ -8,7 +8,7 @@
    For copyright and licensing, see file COPYING */
 
 /* Declare display-related functions from mipslabfunc.c */
-void display_image(int x, const uint8_t *data);
+void display_image(int x, uint8_t *row1, uint8_t *row2, uint8_t *row3, uint8_t *row4);
 void display_init(void);
 void display_string(int line, char *s);
 void display_update(void);
@@ -37,8 +37,13 @@ void display_debug( volatile int * const addr );
 
 /* Declare bitmap array containing font */
 extern const uint8_t const font[128*8];
-/* Declare bitmap array containing icon */
-extern const uint8_t const icon[128];
+/* Declare bitmap array containing 128 columns of 8 rows */
+extern uint8_t icon[128];
+extern uint8_t icon2[128];
+extern uint8_t icon3[128];
+extern uint8_t icon4[128];
+extern char ppMatrix[32][128];
+extern char nextMatrix[32][128];
 /* Declare text buffer for display output */
 extern char textbuffer[4][16];
 
@@ -53,3 +58,15 @@ void time2string( char *, int );
 int getbtns(void);
 int getsw(void);
 void enable_interrupt(void);
+
+void initMatrix(int state);
+void clearMatrix(void);
+int countNeighbors(int r, int c);
+void updateMatrix(void);
+void initGol(int state); 
+
+void setRow1(uint8_t *row);
+void setRow2(uint8_t *row);
+void setRow3(uint8_t *row);
+void setRow4(uint8_t *row);
+

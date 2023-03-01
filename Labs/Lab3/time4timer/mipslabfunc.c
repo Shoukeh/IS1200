@@ -5,6 +5,8 @@
    For copyright and licensing, see file COPYING */
 
 #include <stdint.h>   /* Declarations of uint_32 and the like */
+#include <stdio.h>
+#include <stdlib.h>
 #include <pic32mx.h>  /* Declarations of system-specific addresses etc */
 #include "mipslab.h"  /* Declatations for these labs */
 
@@ -141,24 +143,32 @@ void display_string(int line, char *s) {
 			textbuffer[line][i] = ' ';
 }
 
-void display_image(int x, const uint8_t *data) {
+void display_image(int x, uint8_t *row1, uint8_t *row2, uint8_t *row3, uint8_t *row4) {
 	int i, j;
-	
+	int flag = 0;
 	for(i = 0; i < 4; i++) {
 		DISPLAY_CHANGE_TO_COMMAND_MODE;
 
 		spi_send_recv(0x22);
 		spi_send_recv(i);
 		
-		spi_send_recv(x & 0xF);
-		spi_send_recv(0x10 | ((x >> 4) & 0xF));
+    spi_send_recv(0x00);
+		spi_send_recv(0x10);
 		
 		DISPLAY_CHANGE_TO_DATA_MODE;
-		
-		for(j = 0; j < 32; j++)
-			spi_send_recv(~data[i*32 + j]);
+		if (i == 0) {
+      for(j = 0; j < 128; j++) spi_send_recv(row1[j]);
+    } else if (i == 1) {
+      for(j = 0; j < 128; j++) spi_send_recv(row2[j]);
+    } else if (i == 2) {
+      for(j = 0; j < 128; j++) spi_send_recv(row3[j]);
+    } else if (i == 3) {
+      for(j = 0; j < 128; j++) spi_send_recv(row4[j]);
+    }
 	}
 }
+
+
 
 void display_update(void) {
 	int i, j, k;

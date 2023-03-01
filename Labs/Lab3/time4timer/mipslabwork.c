@@ -46,6 +46,7 @@ void labinit( void )
 
     // Init buttons?
     TRISD = 0xFE0;
+    initGol(4);
     return;
 }
 
@@ -53,49 +54,28 @@ void labinit( void )
 void labwork( void )
 {
     //delay( 1000 );
-    while (timeoutcount < 10) {
+    while (timeoutcount < 1) {
         if (IFS(0) & 0x100) {
             IFSCLR(0) = 256;
             timeoutcount++;
         }
     } timeoutcount = 0;
 
-    time2string( textstring, mytime );
-    display_string( 3, textstring );
-    display_update();
-    tick( &mytime );
+    //time2string( textstring, mytime );
+    //display_string( 3, textstring );
+    //display_update();
+    //tick( &mytime );
 
     volatile int* writeLedE = (volatile int*) 0xbf886110;
     *writeLedE += 0x1;
-    display_image(96, icon);
-
-    // get status of buttons and switches
-    int buttons = getbtns();
-    int newtime = getsw();
-
-    switch (buttons){
-        case 1: //BTN2
-            newtime = newtime<<4; // Shift the new time to the right "space"
-            mytime = mytime & 0xFF0F; // bitwise mask, remove old value
-            mytime += newtime;  // add new value, it will fill in the new "hole" of 0s
-            break;
-
-        case 2: //BTN3
-            newtime = newtime<<8;
-            mytime = mytime & 0xF0FF;
-            mytime += newtime;
-            break;
-
-        case 4: //BTN4
-            newtime = newtime<<12;
-            mytime = mytime & 0x0FFF;
-            mytime += newtime;
-            break;
-        
-        default:
-            break;
-
-    }
+    updateMatrix();
+    setRow1(icon);
+    setRow2(icon2);
+    setRow3(icon3);
+    setRow4(icon4);
+    //icon[3] = 255;
+    display_image(0, icon, icon2, icon3, icon4);
+    //icon[32] += 4;
 }
 
 
