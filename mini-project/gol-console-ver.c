@@ -19,7 +19,7 @@ void free_ppMatrix() {
 
 // Could this have been done with one function? Yes. Did I want to? Nah, too lazy.
 void free_nextMatrix() {
-    for (int r = 0; r < ROWS; r++) {
+    for (int r = 0; r < ROWS; r++) { 
         free(nextMatrix[r]);
     }
     free(nextMatrix);
